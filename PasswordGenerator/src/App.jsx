@@ -1,10 +1,11 @@
-import { useState ,useCallback, useEffect } from 'react'
+import { useState ,useCallback, useEffect,useRef } from 'react'
 
 function App() {
   const [password, setPassword] = useState("");
   const [length, setLength] = useState(8);
   const [numberAllowed, setNumberAllowed] = useState(false);
   const [charAllowed, setCharAllowed] = useState(false)
+  const passwordRef = useRef(null);
 
  const generatePassword = useCallback(()=>{
    let pass = ""
@@ -19,6 +20,13 @@ function App() {
     }
     setPassword(pass);
  },[length,numberAllowed,charAllowed,setPassword])
+
+
+ const copyPasswordToClipBoard = useCallback(()=>{
+  passwordRef.current?.select();
+  passwordRef.current?.setSelectionRange(0,100);
+  window.navigator.clipboard.writeText(password);
+ },[password])
 
  useEffect(()=>{
   generatePassword();
@@ -36,8 +44,11 @@ function App() {
               placeholder="Password"
               className='w-full h-full px-2  overflow-hidden text-xl font-medium outline-none border-none '
               readOnly
+              ref={passwordRef}
               />
-              <button className='w-[8vmax] text-2xl font-medium bg-blue-700 text-white'>Copy</button>
+              <button 
+              onClick={copyPasswordToClipBoard}
+              className='w-[8vmax] text-2xl font-medium bg-blue-700 cursor-pointer hover:bg-blue-900 text-white'>Copy</button>
               </div>
               <div className='w-full h-[5vmax] flex items-center justify-between px-6 bg-slate-300 rounded-lg overflow-hidden mt-3'>
                <div className='flex items-center gap-2 w-[15vmax]'>
